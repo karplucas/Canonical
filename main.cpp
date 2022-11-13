@@ -6,10 +6,8 @@
 #include <sstream>
 #include <fstream>
 
-
-
-UbuntuFetcher::UbuntuFetcher(){}
-UbuntuFetcher::~UbuntuFetcher(){}
+UbuntuFetcher::UbuntuFetcher() {}
+UbuntuFetcher::~UbuntuFetcher() {}
 
 void UbuntuFetcher::download() {
     HTTPDownloader downloader;
@@ -30,14 +28,14 @@ void UbuntuFetcher::download() {
 }
 
 void UbuntuFetcher::supportedReleases() {
-    std::cout << "Currently supported LTS versions: " << std::endl;
+    std::cout << "Currently supported LTS versions: ";
     for (auto product : releases["products"]) {
         if (product["arch"] == "amd64" && product["supported"] == true) {
-            std::cout << "\t\t\t\t" << product["version"] << std::endl;
+            std::cout << product["version"] << " ";
         }
     }
-    std::cout << std::endl;
-    
+    std::cout << std::endl << std::endl;
+
 }
 
 void UbuntuFetcher::currentVersion() {
@@ -52,14 +50,16 @@ void UbuntuFetcher::currentVersion() {
     }
 }
 
-void UbuntuFetcher::imageSHA256(const std::string &name) {
+void UbuntuFetcher::imageSHA256(const std::string& name) {
     for (auto product : releases["products"]) {
         if (product["arch"] == "amd64" && product["supported"] == true && product["version"] == name) {
             auto it = product["versions"].items().begin();
-            std::cout << "SHA256 for release: " << name << " is: " << product["versions"][it.key()]["items"]["disk1.img"]["sha256"] << std::endl << std::endl;
+            std::cout << "SHA256 for release " << name << " is: " << product["versions"][it.key()]["items"]["disk1.img"]["sha256"] << std::endl << std::endl;
             break;
         }
     }
+
+    std::cout << "Could not find the SHA256 for release " << name << std::endl;
 }
 
 
@@ -67,10 +67,55 @@ void UbuntuFetcher::imageSHA256(const std::string &name) {
 //● Return the current Ubuntu LTS version.
 //● Return the sha256 of the disk1.img item of a given Ubuntu release.
 
+void printUsage() {
+    std::cout << "Usage: ubuntufetcher" << " [-a] [-c #] [-s VERSION]" << std::endl;
+    std::cout << std::endl;
+    std::cout << "Options:" << std::endl;
+    std::cout << std::endl;
+    std::cout << "-a                  - Return a list of all currently supported Ubuntu releases." << std::endl;
+    std::cout << "-c                  - Return the current Ubuntu LTS version." << std::endl;
+    std::cout << "-s [VERSION]        - Return the sha256 of the disk1.img item of a given Ubuntu version. (Ex: 22.04)" << std::endl;
+    std::cout << std::endl;
+
+}  
+
 int main(int argc, char** argv) {
+    bool a = false, c = false, s = false;
+    std::string version = "";
+
+    if (argc == 0)
+        printUsage();
+
+    for (auto i = 1; i < argc; ++i) {
+        if (strcmp(argv[i], "-a") == 0)
+            a = true;
+        else if (strcmp(argv[i], "-c") == 0)
+            c = true;
+        else if (strcmp(argv[i], "-s") == 0){
+            i++;
+            if (i < argc) {
+                s = true;
+                version = argv[i];
+            }
+        }
+        else {
+            printUsage();
+            return EXIT_FAILURE;
+        }
+    }
+
     UbuntuFetcher fetcher;
-    fetcher.download();
-    fetcher.supportedReleases();
-    fetcher.currentVersion();
-    fetcher.imageSHA256("22.04");
+    if (a || c || s)
+        fetcher.download();
+    else
+        printUsage();
+
+    if(a)
+        fetcher.supportedReleases();
+    if(c)
+        fetcher.currentVersion();
+    if(s)
+        fetcher.imageSHA256(version);
+
+    return EXIT_SUCCESS;
 }
