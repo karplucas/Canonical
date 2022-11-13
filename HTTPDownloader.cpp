@@ -33,6 +33,7 @@ string HTTPDownloader::download(const std::string& url) {
     std::stringstream out;
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &out);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0); //Removed SSL verification
     /* Perform the request, res will get the return code */
     CURLcode res = curl_easy_perform(curl);
     /* Check for errors */
