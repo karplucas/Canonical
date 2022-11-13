@@ -6,10 +6,11 @@
  * Written by Uli Köhler (techoverflow.net)
  * Published under CC0 1.0 Universal (public domain)
  */
-#ifndef qqq
+#ifndef HTTPDOWNLOADER_HPP
 #define HTTPDOWNLOADER_HPP
 
 #include <string>
+
 
 /**
  * A non-threadsafe simple libcURL-easy based HTTP downloader
