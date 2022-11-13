@@ -13,9 +13,10 @@
 #include <sstream>
 #include <iostream>
 using namespace std;
-size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream) {
-    string data((const char*) ptr, (size_t) size * nmemb);
-    *((stringstream*) stream) << data << endl;
+
+static size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* userp)
+{
+    ((std::string*)userp)->append((char*)contents, size * nmemb);
     return size * nmemb;
 }
 HTTPDownloader::HTTPDownloader() {
@@ -30,9 +31,9 @@ string HTTPDownloader::download(const std::string& url) {
     curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
     curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1); //Prevent "longjmp causes uninitialized stack frame" bug
     curl_easy_setopt(curl, CURLOPT_ACCEPT_ENCODING, "deflate");
-    std::stringstream out;
-    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &out);
+    std::string readBuffer;
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
     curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0); //Removed SSL verification
     /* Perform the request, res will get the return code */
     CURLcode res = curl_easy_perform(curl);
@@ -41,5 +42,5 @@ string HTTPDownloader::download(const std::string& url) {
         fprintf(stderr, "curl_easy_perform() failed: %s\n",
                 curl_easy_strerror(res));
     }
-    return out.str();
+    return readBuffer;
 }
