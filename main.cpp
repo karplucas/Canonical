@@ -2,14 +2,33 @@
 #include "ubuntufetcher.hpp"
 #include <iostream>
 #include <string>
+#include <vector>
+
+
 
 UbuntuFetcher::UbuntuFetcher(){}
 UbuntuFetcher::~UbuntuFetcher(){}
 
-std::string UbuntuFetcher::download() {
+void UbuntuFetcher::download() {
     HTTPDownloader downloader;
     std::string content = downloader.download(url);
-    std::cout << content << std::endl;
+    releases = json::parse(content, nullptr, false);
+}
+void UbuntuFetcher::supportedReleases() {
+    std::vector<std::string> supported_amd64;
+    for (auto product : releases["products"]) {
+        if (product["amd64"] == "amd64" && product["supported"] == "true")
+            supported_amd64.push_back(product["release"]);
+    }
+    return "";
+}
+
+void UbuntuFetcher::currentVersion() {
+    return "";
+}
+
+void UbuntuFetcher::imageSHA256(const std::string &name) {
+    return "";
 }
 
 

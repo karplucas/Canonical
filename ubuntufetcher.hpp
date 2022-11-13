@@ -8,6 +8,10 @@
 #define UBUNTU_FETCHER_HPP
 
 #include <string>
+#include <nlohmann/json.hpp>
+
+using json = nlohmann::json;
+
 
  /**
   * An Ubuntu information fetcher class.
@@ -19,23 +23,25 @@ public:
     /**
     * Download the Simplestream data to std::string info.
     */
-    std::string download();
+    void download();
     /**
     * Return all AMD64 Ubuntu supported releases.
     */
-    std::string supportedReleases();
+    void supportedReleases();
     /**
     * Return the current LTS Ubuntu version.
     */
-    std::string currentVersion();
+    void currentVersion();
     /**
     * Return the SHA256 for disk1.img provided.
     */
-    std::string imageSHA256();
+    void UbuntuFetcher::imageSHA256(const std::string& name);
 
 private:
     const std::string url = "https://cloud-images.ubuntu.com/releases/streams/v1/com.ubuntu.cloud:released:download.json";
-    std::string info;
+    json releases;
+
+
 };
 
 #endif  /* UBUNTU_FETCHER_HPP */
