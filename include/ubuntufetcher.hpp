@@ -35,7 +35,7 @@ public:
     /**
     * Return the SHA256 for disk1.img provided.
     */
-    void UbuntuFetcher::imageSHA256(const std::string& name);
+    void imageSHA256(const std::string& name);
 
 private:
     const std::string url = "https://cloud-images.ubuntu.com/releases/streams/v1/com.ubuntu.cloud:released:download.json";
