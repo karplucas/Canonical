@@ -5,6 +5,7 @@ sudo apt install cmake libcurl4-openssl-dev
 # Build instructions
 ```
 git clone https://github.com/karplucas/Canonical
+cd Canonical
 git submodule init
 git submodule update
 mkdir build
