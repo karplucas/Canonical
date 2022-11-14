@@ -17,21 +17,16 @@ endif (WIN32)
 find_package(CURL REQUIRED)
 include_directories(${CURL_INCLUDE_DIR})
 
-
-
-SET(TARGET_H
-    HTTPDownloader.hpp  
-   )
-
 # Local source files here
 SET(TARGET_SRC
-    HTTPDownloader.cpp
-    main.cpp
+    src/HTTPDownloader.cpp
+    src/main.cpp
     )
 
 
 add_executable(ubuntufetcher ${TARGET_SRC} ${TARGET_H})
 add_subdirectory(json)
+include_directories("include/")
 include_directories("json/include/")
 target_link_libraries(ubuntufetcher ${CURL_LIBRARY})
 
